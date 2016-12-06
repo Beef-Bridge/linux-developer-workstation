@@ -13,6 +13,7 @@
 # Définiton des variables
 # -----------------------
 rouge='\e[1;31m'
+neutre='\e[0;m'
 
 # Vérification que le script est bien executé en tant que 'root'
 # --------------------------------------------------------------
@@ -20,10 +21,11 @@ if [[ $EUID -ne 0 ]]; then
     echo "******************************************************************************"
     echo "***                                                                        ***"
     echo "***                                                                        ***"
-    echo "***            ${rouge}This script must be run as root${neutre}            ***" 1>&2
+    echo -e "***                 ${rouge}!!! This script must be run as root !!!${neutre}                ***"
     echo "***                                                                        ***"
     echo "***                                                                        ***"
     echo "******************************************************************************"
+    1>&2
 	exit 1
 fi
 
