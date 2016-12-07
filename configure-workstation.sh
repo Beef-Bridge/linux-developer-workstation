@@ -10,12 +10,12 @@
 #
 # ---------------------------------------------------------------------------- #
 
-# Définiton des variables
+# Définition des variables
 # -----------------------
 rouge='\e[1;31m'
+vert='\e[1;32m'
 bleu='\e[1;34m'
 neutre='\e[0;m'
-
 
 NOW=$(date +"%m-%d-%Y")
 
@@ -42,6 +42,22 @@ logFile="/tmp/configure-workstation-$NOW"
 touch $logFile
 redirect="2>&1 >> $logFile"
 
+# Fonctions
+# ---------
+function cmd_print {
+    cmdLine="$1"
+    cmdStringProcess=`printf "%-45s" "$2"`
+    cmdString=`printf "%-50s" "$2"`
+
+    echo -ne "*** $cmdStringProcess${cyan}[PROCESS]${neutre} ***"
+    eval $cmdLine $redirect
+    if [ $? -eq 0 ] then
+        echo -e "\r*** $cmdString${vert}[OK]${neutre} ***"
+    else
+        echo -e "\r*** $cmdString${rouge}[KO]${neutre} ***"
+    fi
+}
+
 # Mise à jour de la distribution utilisée
 # ---------------------------------------
 clear
@@ -50,7 +66,19 @@ echo "***                                                                       
 echo -e "*** ${bleu}Update and upgrade software sources${neutre}                                    ***"
 echo "***                                                                        ***"
 echo "******************************************************************************"
-#apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y
+cmd_print "apt-get clean" "- apt-get clean 1"
+# cmd_print "apt-get update" "- apt-get update 2"
+# cmd_print "apt-get --yes upgrade" "- apt-get --yes upgrade 3"
+# apt-get -y --force-yes update
+# apt-get -y --force-yes upgrade
+# apt-get -y --force-yes dist-upgrade
+
+clear
+echo "******************************************************************************"
+echo "***                                                                        ***"
+echo -e "*** ${bleu}Update and upgrade software sources : ${neutre}                                    ***"
+echo "***                                                                        ***"
+echo "******************************************************************************"
 
 # Nettoyage de l'installation
 # ---------------------------
