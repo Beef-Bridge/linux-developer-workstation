@@ -66,7 +66,7 @@ echo "***                                                                       
 echo -e "*** ${bleu}Update and upgrade software sources${neutre}                                    ***"
 echo "***                                                                        ***"
 echo "******************************************************************************"
-cmd_print "apt-get clean" "- apt-get clean 1"
+cmd_print "apt-get -y --force-yes update" "- apt-get update 1"
 # cmd_print "apt-get update" "- apt-get update 2"
 # cmd_print "apt-get --yes upgrade" "- apt-get --yes upgrade 3"
 # apt-get -y --force-yes update
@@ -82,8 +82,8 @@ echo "**************************************************************************
 
 # Nettoyage de l'installation
 # ---------------------------
-apt-get clean
-apt-get -q --yes autoremove --purge
+# apt-get clean
+# apt-get -q --yes autoremove --purge
 
 # prompt for a reboot
 # -------------------
