@@ -49,9 +49,10 @@ function cmd_print {
     cmdStringProcess=`printf "%-45s" "$2"`
     cmdString=`printf "%-50s" "$2"`
 
-    echo -ne "*** $cmdStringProcess${cyan}[PROCESS]${neutre} ***"
+    echo -ne "*** $cmdStringProcess${bleu}[PROCESS]${neutre} ***"
     eval $cmdLine $redirect
-    if [ $? -eq 0 ] then
+    if [ $? -eq 0 ]
+    then
         echo -e "\r*** $cmdString${vert}[OK]${neutre} ***"
     else
         echo -e "\r*** $cmdString${rouge}[KO]${neutre} ***"
@@ -66,12 +67,9 @@ echo "***                                                                       
 echo -e "*** ${bleu}Update and upgrade software sources${neutre}                                    ***"
 echo "***                                                                        ***"
 echo "******************************************************************************"
-cmd_print "apt-get -y --force-yes update" "- apt-get update 1"
-# cmd_print "apt-get update" "- apt-get update 2"
-# cmd_print "apt-get --yes upgrade" "- apt-get --yes upgrade 3"
-# apt-get -y --force-yes update
-# apt-get -y --force-yes upgrade
-# apt-get -y --force-yes dist-upgrade
+cmd_print "apt-get -qq -y --force-yes update" "-> apt-get update"
+cmd_print "apt-get -qq -y --force-yes upgrade" "-> apt-get upgrade"
+cmd_print "apt-get -qq -y --force-yes dist-upgrade" "-> apt-get dist-upgrade"
 
 clear
 echo "******************************************************************************"
@@ -82,8 +80,8 @@ echo "**************************************************************************
 
 # Nettoyage de l'installation
 # ---------------------------
-# apt-get clean
-# apt-get -q --yes autoremove --purge
+cmd_print "apt-get -qq clean" "-> apt-get clean"
+cmd_print "apt-get -qq --yes autoremove --purge" "-> apt-get autoremove"
 
 # prompt for a reboot
 # -------------------
