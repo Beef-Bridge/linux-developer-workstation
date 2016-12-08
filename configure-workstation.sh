@@ -80,12 +80,17 @@ echo "**************************************************************************
 
 # Nettoyage de l'installation
 # ---------------------------
+echo "******************************************************************************"
+echo "***                                                                        ***"
+echo -e "*** ${bleu}Clean cache & remove installation files : ${neutre}                                    ***"
+echo "***                                                                        ***"
+echo "******************************************************************************"
 cmd_print "apt-get -qq clean" "-> apt-get clean"
 cmd_print "apt-get -qq --yes autoremove --purge" "-> apt-get autoremove"
 
 # prompt for a reboot
 # -------------------
-clear
+#clear
 echo ""
 echo "===================="
 echo " TIME FOR A REBOOT! "
