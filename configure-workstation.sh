@@ -19,6 +19,18 @@ neutre='\e[0;m'
 
 NOW=$(date +"%m-%d-%Y")
 
+# Import functions
+# ----------------
+dir="$(dirname "$0")"
+.$dir/functions/check
+
+# RUN
+check_dependencies
+#while :
+#do
+#    main
+#done
+
 # Vérification que le script est bien executé en tant que 'root'
 # --------------------------------------------------------------
 if [[ $EUID -ne 0 ]]; then
@@ -33,7 +45,7 @@ if [[ $EUID -ne 0 ]]; then
     echo -e "*** ${rouge}Make sure you have read and understood this script before executing it${neutre} ***"
     echo "******************************************************************************"
     1>&2
-	exit 1
+    exit 1
 fi
 
 # Création d'un fichier de log
@@ -80,6 +92,17 @@ echo "***                                                                       
 echo "******************************************************************************"
 cmd_print "apt-get -qq clean" "-> apt-get clean"
 cmd_print "apt-get -qq --yes autoremove --purge" "-> apt-get autoremove"
+
+
+
+# Installation des logiciels
+# --------------------------
+cmd_print "add-apt-repository ppa:webupd8team/sublime-text-3 && apt-get update && apt-get install sublime-text-installer" "-> Install Sublime Text 3"
+
+# Configuration du Launcher Ubuntu
+# --------------------------------
+gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://firefox.desktop', 'application://gnome-terminal.desktop', 'application://sublime-text.desktop']"
+
 
 # prompt for a reboot
 # -------------------
