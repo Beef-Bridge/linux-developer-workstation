@@ -71,13 +71,6 @@ cmd_print "apt-get -qq -y --force-yes update" "-> apt-get update"
 cmd_print "apt-get -qq -y --force-yes upgrade" "-> apt-get upgrade"
 cmd_print "apt-get -qq -y --force-yes dist-upgrade" "-> apt-get dist-upgrade"
 
-clear
-echo "******************************************************************************"
-echo "***                                                                        ***"
-echo -e "*** ${bleu}Update and upgrade software sources : ${neutre}                                    ***"
-echo "***                                                                        ***"
-echo "******************************************************************************"
-
 # Nettoyage de l'installation
 # ---------------------------
 echo "******************************************************************************"
