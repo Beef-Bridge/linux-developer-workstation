@@ -1,5 +1,4 @@
 #!/bin/bash
-# github.com/snwh/ubuntu-post-install/
 
 dir="$(dirname "$0")"
 

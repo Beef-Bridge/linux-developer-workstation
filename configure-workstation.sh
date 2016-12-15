@@ -1,114 +1,69 @@
 #!/bin/bash
-# ---------------------------------------------------------------------------- #
-#
-#              _______      __________             .__
-#              \      \     \______   \____ _______|__| ______
-#              /   |   \     |     ___|__  \\_  __ \  |/  ___/
-#             /    |    \    |    |    / __ \|  | \/  |\___ \
-#             \____|__  / /\ |____|   (____  /__|  |__/____  >
-#                     \/  \/               \/              \/
-#
-# ---------------------------------------------------------------------------- #
-
-# Définition des variables
-# -----------------------
-rouge='\e[1;31m'
-vert='\e[1;32m'
-bleu='\e[1;34m'
-neutre='\e[0;m'
-
-NOW=$(date +"%m-%d-%Y")
-
-# Import functions
-# ----------------
 dir="$(dirname "$0")"
-.$dir/functions/check
+. $dir/functions/check
+. $dir/functions/development
+. $dir/functions/thirdparty
+. $dir/functions/launcher
 
-# RUN
-check_dependencies
-#while :
-#do
-#    main
-#done
+#----- Fancy Messages -----#
+show_error() {
+	echo -e "\033[1;31m$@\033[m" 1>&2
+}
+show_info() {
+	echo -e "\033[1;32m$@\033[0m"
+}
+show_warning() {
+	echo -e "\033[1;33m$@\033[0m"
+}
+show_question() {
+	echo -e "\033[1;34m$@\033[0m"
+}
+show_success() {
+	echo -e "\033[1;35m$@\033[0m"
+}
+show_header() {
+	echo -e "\033[1;36m$@\033[0m"
+}
+show_listitem() {
+	echo -e "\033[0;37m$@\033[0m"
+}
 
-# Vérification que le script est bien executé en tant que 'root'
-# --------------------------------------------------------------
-if [[ $EUID -ne 0 ]]; then
-    clear
-    echo "******************************************************************************"
-    echo "***                                                                        ***"
-    echo "***                                                                        ***"
-    echo -e "***                 ${rouge}!!! This script must be run as root !!!${neutre}                ***"
-    echo "***                                                                        ***"
-    echo "***                                                                        ***"
-    echo -e "*** ${rouge}You must run the script with the command 'sudo'${neutre}                        ***"
-    echo -e "*** ${rouge}Make sure you have read and understood this script before executing it${neutre} ***"
-    echo "******************************************************************************"
-    1>&2
-    exit 1
-fi
-
-# Création d'un fichier de log
-# ----------------------------
-logFile="/tmp/configure-workstation-$NOW"
-touch $logFile
-redirect="2>&1 >> $logFile"
-
-# Fonctions
-# ---------
-function cmd_print {
-    cmdLine="$1"
-    cmdStringProcess=`printf "%-45s" "$2"`
-    cmdString=`printf "%-50s" "$2"`
-
-    echo -ne "*** $cmdStringProcess${bleu}[PROCESS]${neutre} ***"
-    eval $cmdLine $redirect
-    if [ $? -eq 0 ]
-    then
-        echo -e "\r*** $cmdString${vert}[OK]${neutre} ***"
+# Main
+function main {
+    eval `resize`
+    MAIN=$(whiptail \
+        --notags \
+        --title "Ubuntu Post-Install Script" \
+        --menu "\nWhat would you like to do?" \
+        --cancel-button "Quit" \
+        $LINES $COLUMNS $(( $LINES - 12 )) \
+        development 'Install preferred development tools' \
+        thirdparty  'Install third-party applications' \
+        launcher  'Configure launcher' \
+        3>&1 1>&2 2>&3)
+     
+    exitstatus=$?
+    if [ $exitstatus = 0 ]; then
+        $MAIN
     else
-        echo -e "\r*** $cmdString${rouge}[KO]${neutre} ***"
+        quit
     fi
 }
 
-# Mise à jour de la distribution utilisée
-# ---------------------------------------
-clear
-echo "******************************************************************************"
-echo "***                                                                        ***"
-echo -e "*** ${bleu}Update and upgrade software sources${neutre}                                    ***"
-echo "***                                                                        ***"
-echo "******************************************************************************"
-cmd_print "apt-get -qq -y --force-yes update" "-> apt-get update"
-cmd_print "apt-get -qq -y --force-yes upgrade" "-> apt-get upgrade"
-cmd_print "apt-get -qq -y --force-yes dist-upgrade" "-> apt-get dist-upgrade"
+# Quit
+function quit {
+    if (whiptail --title "Quit" --yesno "Are you sure you want quit?" 10 60) then
+        echo "Exiting..."
+        show_info 'Thanks for using!'
+        exit 99
+    else
+        main
+    fi
+}
 
-# Nettoyage de l'installation
-# ---------------------------
-echo "******************************************************************************"
-echo "***                                                                        ***"
-echo -e "*** ${bleu}Clean cache & remove installation files : ${neutre}                                    ***"
-echo "***                                                                        ***"
-echo "******************************************************************************"
-cmd_print "apt-get -qq clean" "-> apt-get clean"
-cmd_print "apt-get -qq --yes autoremove --purge" "-> apt-get autoremove"
-
-
-
-# Installation des logiciels
-# --------------------------
-cmd_print "add-apt-repository ppa:webupd8team/sublime-text-3 && apt-get update && apt-get install sublime-text-installer" "-> Install Sublime Text 3"
-
-# Configuration du Launcher Ubuntu
-# --------------------------------
-gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://firefox.desktop', 'application://gnome-terminal.desktop', 'application://sublime-text.desktop']"
-
-
-# prompt for a reboot
-# -------------------
-#clear
-echo ""
-echo "===================="
-echo " TIME FOR A REBOOT! "
-echo "===================="
-echo ""
+#RUN
+check_dependencies
+while :
+do
+	main
+done

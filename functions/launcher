@@ -1,0 +1,27 @@
+#!/bin/bash
+dir="$(dirname "$0")"
+
+source $dir/data/launcher/google-chrome
+
+# Configure launcher
+function launcher {
+    eval `resize`
+    LAUNCHER=$(whiptail \
+        --notags \
+        --title "Launcher configuration" \
+        --menu "\nWhat software do you want to place in the launcher?" \
+        --ok-button "Place" \
+        --cancel-button "Go Back" \
+        $LINES $COLUMNS $(( $LINES - 12 )) \
+        'google-chrome'     'Google Chrome' \
+        'spotify'           'Spotify' \
+        'vlc'               'VLC Player' \
+        3>&1 1>&2 2>&3)
+     
+    exitstatus=$?
+    if [ $exitstatus = 0 ]; then
+        $LAUNCHER
+    else
+        main
+    fi
+}

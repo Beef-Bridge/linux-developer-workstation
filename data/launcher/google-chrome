@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Google Chrome
+function google-chrome {
+    # Variables
+    PACKAGE=google-chrome-stable
+    NAME="Google Chrome"
+    myfile='google-chrome.desktop'
+
+    # Check if already installed
+    echo 'Checking if '$NAME' is already installed...'
+    PKGCHECK=$(dpkg-query -W --showformat='${Status}\n' $PACKAGE|grep "install ok installed")
+
+    if [ "" == "$PKGCHECK" ]; then
+        # Error
+        show_success 'ERROR.'
+        whiptail --title "Interrupted" --msgbox "$NAME is not installed." 8 78
+        launcher
+    else
+        # Done
+        sudo gsettings set com.canonical.Unity.Launcher favorites "['application://gnome-terminal.desktop']"
+        list=$(gsettings get com.canonical.Unity.Launcher favorites)
+        newlist=`echo $list | sed s/]/", 'application:\/\/google-chrome.desktop']"/`
+        sudo gsettings set com.canonical.Unity.Launcher favorites "$newlist"
+
+        show_success 'Done.'
+        whiptail --title "Finished" --msgbox "$NAME was placed in the launcher." 8 78
+        launcher
+    fi
+}
