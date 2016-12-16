@@ -13,7 +13,31 @@ function development {
         --scrolltext) then
         show_info 'Installing...'
         show_warning 'Requires root privileges'
-        sudo apt-get install -y $(cat $DEVTOOLS)
+
+        for DEVTOOL in $(cat $DEVTOOLS)
+        do
+        	if [ $DEVTOOL == "git" ]; then
+        		sudo apt-get install -y $DEVTOOL
+
+        		gitUsername=$(whiptail --title "Configuration Git" --inputbox "What is your GIT username?" 8 78 3>&1 1>&2 2>&3)
+        		exitstatus=$?
+        		if [ $exitstatus = 0 ]; then
+        			git config --global user.name "${gitUsername}"
+				fi
+
+				gitEmail=$(whiptail --title "Configuration Git" --inputbox "What is your GIT email?" 8 78 3>&1 1>&2 2>&3)
+        		exitstatus=$?
+        		if [ $exitstatus = 0 ]; then
+        			git config --global user.email "${gitEmail}"
+				fi
+
+				gitConfig=$(git config --list)
+				echo "This your Git configuration : $gitConfig" > gitConfig_textbox
+				whiptail --textbox gitConfig_textbox 8 78
+        	else
+        		sudo apt-get install -y $DEVTOOL
+        	fi
+        done
 
         # Done
         show_success 'Done.'
